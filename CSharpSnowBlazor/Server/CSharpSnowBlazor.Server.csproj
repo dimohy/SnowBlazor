@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <UserSecretsId>cce0dac8-8664-4995-95fa-e64b650851d7</UserSecretsId>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="6.0.0-preview.1.21103.6" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Client\CSharpSnowBlazor.Client.csproj" />
+    <ProjectReference Include="..\Shared\CSharpSnowBlazor.Shared.csproj" />
+  </ItemGroup>
+
+
+</Project>
