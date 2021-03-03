@@ -21,6 +21,10 @@ namespace CSharpSnowBlazor.Server
             Host.CreateDefaultBuilder(args)
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
+                    webBuilder.ConfigureKestrel(options =>
+                    {
+                        options.ListenLocalhost(6020);
+                    });
                     webBuilder.UseStartup<Startup>();
                 });
     }

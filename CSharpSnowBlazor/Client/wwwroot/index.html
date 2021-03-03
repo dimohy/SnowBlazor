@@ -40,6 +40,8 @@
 
             game.canvas.width = window.innerWidth;
             game.canvas.height = window.innerHeight;
+
+            game.instance.invokeMethodAsync('ResizeCanvas');
         }
 
         window.initGame = (instance) => {
@@ -59,8 +61,8 @@
                 strokeText: function (fields) {
                     const c = window.game.context;
                     const text = Blazor.platform.readStringField(fields, 0);
-                    const x = Blazor.platform.readInt32Field(fields, 8);
-                    const y = Blazor.platform.readInt32Field(fields, 12);
+                    const x = Blazor.platform.readInt32Field(fields, 4);
+                    const y = Blazor.platform.readInt32Field(fields, 8);
                     c.strokeText(text, x, y);
                 },
                 beginPath: function () {

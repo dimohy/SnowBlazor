@@ -21,7 +21,7 @@
 
 @code
 {
-    static readonly int MaxSnow = 100;
+    static readonly int MaxSnow = 300;
 
     List<Snow> snowList = new List<Snow>();
 
@@ -54,6 +54,17 @@
             await cc.SetStrokeStyleAsync("white");
             await cc.SetFontAsync("30px Arial");
         }
+    }
+
+    [JSInvokable]
+    public async ValueTask ResizeCanvas()
+    {
+        if (cc == null)
+            return;
+
+        await cc.SetTextBaselineAsync(TextBaseline.Top);
+        await cc.SetStrokeStyleAsync("white");
+        await cc.SetFontAsync("30px Arial");
     }
 
     [JSInvokable]
