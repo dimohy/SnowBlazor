@@ -4,3 +4,8 @@
 `SnowBlazor` is a simple demo of snowfall using `Blazor.Extensions.Canvas`.
 
 I used .NET 6 Preview 1 and Blazor Webassembly.
+
+## Under study
+
+We want to dramatically increase performance with `InvokeUnmarshalled`. Will my computer with a great AMD 4800HS CPU only get '45 fps'?
+Now we achieve '250 fps' with `InvokeUnmarshalled`. 
