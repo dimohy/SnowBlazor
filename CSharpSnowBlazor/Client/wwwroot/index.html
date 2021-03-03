@@ -26,8 +26,12 @@
     <script>
         function gameLoop(timeStamp) {
             window.requestAnimationFrame(gameLoop);
-            game.instance.invokeMethodAsync('GameLoop', timeStamp,
+            game.instance.invokeMethodAsync('GameLoop2', timeStamp,
                 game.canvas.width, game.canvas.height);
+        }
+
+        function renderGame() {
+
         }
 
         function onResize() {
@@ -43,8 +47,48 @@
             var canvases = canvasContainer.getElementsByTagName('canvas') || [];
             window.game = {
                 instance: instance,
-                canvas: canvases.length ? canvases[0] : null
+                canvas: canvases.length ? canvases[0] : null,
+                clearRect: function (fields) {
+                    const c = window.game.context;
+                    const x = Blazor.platform.readInt32Field(fields, 0);
+                    const y = Blazor.platform.readInt32Field(fields, 4);
+                    const width = Blazor.platform.readInt32Field(fields, 8);
+                    const height = Blazor.platform.readInt32Field(fields, 12);
+                    c.clearRect(x, y, width, height);
+                },
+                strokeText: function (fields) {
+                    const c = window.game.context;
+                    const text = Blazor.platform.readStringField(fields, 0);
+                    const x = Blazor.platform.readInt32Field(fields, 8);
+                    const y = Blazor.platform.readInt32Field(fields, 12);
+                    c.strokeText(text, x, y);
+                },
+                beginPath: function () {
+                    const c = window.game.context;
+                    c.beginPath();
+                },
+                //await cc.ArcAsync(snow.X, snow.Y, snow.Size, 0, 2 * Math.PI, true);
+                arc: function (fields) {
+                    const c = window.game.context;
+                    const x = Blazor.platform.readFloatField(fields, 0);
+                    const y = Blazor.platform.readFloatField(fields, 4);
+                    const radius = Blazor.platform.readFloatField(fields, 8);
+                    const startAngle = Blazor.platform.readFloatField(fields, 12);
+                    const endAngle = Blazor.platform.readFloatField(fields, 16);
+                    const anticlockwise = Blazor.platform.readInt32Field(fields, 20);
+                    c.arc(x, y, radius, startAngle, endAngle, anticlockwise);
+                },
+                setFillStyle: function(pFields) {
+                    const c = window.game.context;
+                    const fields = Blazor.platform.readStringField(pFields, 0);
+                    c.fillStyle = fields;
+                },
+                fill: function () {
+                    const c = window.game.context;
+                    c.fill();
+                }
             };
+            window.game.context = window.game.canvas.getContext('2d');
 
             window.addEventListener("resize", onResize);
             onResize();

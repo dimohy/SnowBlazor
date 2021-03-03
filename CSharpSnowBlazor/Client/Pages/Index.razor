@@ -31,8 +31,8 @@
     int fpsCount = 0;
     Random rand;
     Stopwatch sw;
-    int canvasWidth;
-    int canvasHeight;
+    long lastMs;
+    IJSUnmarshalledRuntime JSUnmarshalledRuntime => JsRuntime as IJSUnmarshalledRuntime;
 
     protected override async Task OnInitializedAsync()
     {
@@ -47,16 +47,69 @@
 
             cc = await canvasRef.CreateCanvas2DAsync();
             sw = Stopwatch.StartNew();
+            lastMs = sw.ElapsedMilliseconds;
             rand = new Random();
 
             await cc.SetTextBaselineAsync(TextBaseline.Top);
             await cc.SetStrokeStyleAsync("white");
+            await cc.SetFontAsync("30px Arial");
         }
+    }
+
+    [JSInvokable]
+    public void GameLoop2(float timeStamp, int width, int height)
+    {
+        var fps = 1000d / (sw.ElapsedMilliseconds - lastMs);
+        lastMs = sw.ElapsedMilliseconds;
+
+        if (snowList.Count < MaxSnow)
+        {
+            snowList.Add(new()
+            {
+                X = rand.Next(0, width),
+                Y = -rand.Next(0, height),
+                Kind = snowList.Count / (MaxSnow / 5)
+            });
+        }
+
+        //await cc.BeginBatchAsync();
+        //await cc.ClearRectAsync(0, 0, width, height);
+        JSUnmarshalledRuntime.InvokeUnmarshalled<(int, int, int, int), bool>("game.clearRect", (0, 0, width, height));
+
+        //await cc.StrokeTextAsync($"count: {fpsCount}, {fps:00.0}", 16, 16);
+        JSUnmarshalledRuntime.InvokeUnmarshalled<(string, int, int), bool>("game.strokeText", ($"count: {fpsCount}, {fps:00.0}", 16, 16));
+
+        foreach (var snow in snowList)
+        {
+            //await cc.BeginPathAsync();
+            JSUnmarshalledRuntime.InvokeUnmarshalled<bool>("game.beginPath");
+            //await cc.ArcAsync(snow.X, snow.Y, snow.Size, 0, 2 * Math.PI, true);
+            JSUnmarshalledRuntime.InvokeUnmarshalled<(float, float, float, float, float, bool), bool>("game.arc", (snow.X, snow.Y, snow.Size, 0f, (float)(2 * Math.PI), true));
+            //await cc.SetFillStyleAsync(snow.Color);
+            JSUnmarshalledRuntime.InvokeUnmarshalled<(string, bool), bool>("game.setFillStyle", (snow.Color, true));
+            //await cc.FillAsync();
+            JSUnmarshalledRuntime.InvokeUnmarshalled<bool>("game.fill");
+
+            snow.Y += snow.Kind switch { 0 => 1, 1 => 2, 2 => 3, 3 => 4, 4 => 5, _ => 5 };
+            if (snow.Y > height)
+                snow.Y = 0;
+
+            snow.X += rand.Next(0, 2);
+            if (snow.X > width)
+                snow.X = 0;
+        }
+
+        //await cc.EndBatchAsync();
+
+        fpsCount++;
     }
 
     [JSInvokable]
     public async ValueTask GameLoop(float timeStamp, int width, int height)
     {
+        var fps = 1000d / (sw.ElapsedMilliseconds - lastMs);
+        lastMs = sw.ElapsedMilliseconds;
+
         if (snowList.Count < MaxSnow)
         {
             snowList.Add(new()
@@ -70,7 +123,7 @@
         await cc.BeginBatchAsync();
         await cc.ClearRectAsync(0, 0, width, height);
 
-        await cc.StrokeTextAsync($"count: {fpsCount}", 16, 16);
+        await cc.StrokeTextAsync($"count: {fpsCount}, {fps:00.0}", 16, 16);
 
         foreach (var snow in snowList)
         {
@@ -95,7 +148,6 @@
 
     public class Snow
     {
-
         public float X { get; set; }
         public float Y { get; set; }
         public int Kind { get; set; }
