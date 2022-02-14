@@ -3,7 +3,7 @@
 
 `SnowBlazor` is a simple demo of snowfall using `Blazor.Extensions.Canvas`.
 
-I used .NET 6 Preview 1 and Blazor Webassembly.
+I used .NET 6 and Blazor Webassembly.
 
 ## Under study
 
