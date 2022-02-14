@@ -32,6 +32,7 @@
     Random rand;
     Stopwatch sw;
     long lastMs;
+    double fps;
     IJSUnmarshalledRuntime JSUnmarshalledRuntime => JsRuntime as IJSUnmarshalledRuntime;
 
     protected override async Task OnInitializedAsync()
@@ -70,8 +71,12 @@
     [JSInvokable]
     public void GameLoop2(float timeStamp, int width, int height)
     {
-        var fps = 1000d / (sw.ElapsedMilliseconds - lastMs);
-        lastMs = sw.ElapsedMilliseconds;
+        if (sw.ElapsedMilliseconds - lastMs > 3000)
+        {
+            fps = fpsCount / 3;
+            fpsCount = 0;
+            lastMs = sw.ElapsedMilliseconds;
+        }
 
         if (snowList.Count < MaxSnow)
         {
