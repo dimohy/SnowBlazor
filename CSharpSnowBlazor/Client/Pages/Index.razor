@@ -110,7 +110,7 @@
             if (snow.Y > height)
                 snow.Y = 0;
 
-            snow.X += rand.Next(0, 2);
+            snow.X += rand.NextSingle() * (snow.Kind + 1) / 2;
             if (snow.X > width)
                 snow.X = 0;
         }
